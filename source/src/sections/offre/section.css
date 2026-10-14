@@ -1,0 +1,32 @@
+#offre .of-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 2.4vw, 30px); }
+#offre .of-box {
+  position: relative; display: grid; justify-items: start; gap: 6px; padding: clamp(18px, 2.4vw, 28px); text-align: left; border-radius: 26px; color: var(--cocoa);
+  background: radial-gradient(130% 110% at 25% 10%, color-mix(in srgb, var(--c) 55%, #FFF8EE), var(--c) 60%, color-mix(in srgb, var(--c) 82%, #3A211C));
+  box-shadow: var(--clay-hi), 0 8px 0 color-mix(in srgb, var(--c) 65%, #3A211C), var(--drop);
+  transition: transform .15s var(--ease-pop), box-shadow .15s;
+}
+#offre .of-box:hover { transform: translateY(-3px) rotate(-.6deg); }
+#offre .of-box[aria-pressed="true"] { transform: translateY(6px); box-shadow: var(--clay-hi), 0 2px 0 color-mix(in srgb, var(--c) 65%, #3A211C), var(--drop-sm); }
+#offre .of-name { font: 400 clamp(26px, 2.8vw, 36px)/1 var(--f-display); }
+#offre .of-line { font: 600 16px/1.3 var(--f-body); color: color-mix(in srgb, var(--cocoa) 80%, var(--c)); }
+#offre .of-check { position: absolute; top: 16px; right: 16px; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.55); box-shadow: inset 0 2px 4px rgba(60,30,20,.2); }
+#offre .of-box[aria-pressed="true"] .of-check { background: var(--cocoa); }
+#offre .of-box[aria-pressed="true"] .of-check::after { content: ""; position: absolute; left: 11px; top: 7px; width: 9px; height: 15px; border: solid var(--chalk); border-width: 0 4px 4px 0; transform: rotate(40deg); }
+#offre .of-ico { display: block; width: 96px; height: 64px; margin-bottom: 10px; border-radius: 12px; background: #FFFDF9; box-shadow: 0 8px 14px -6px rgba(60,30,20,.4); position: relative; overflow: hidden; }
+#offre .of-ico--web i { position: absolute; left: 10px; right: 10px; height: 8px; border-radius: 4px; background: var(--cyclo-mid); }
+#offre .of-ico--web i:nth-child(1) { top: 0; left: 0; right: 0; height: 14px; border-radius: 0; background: #E9DFD6; }
+#offre .of-ico--web i:nth-child(2) { top: 24px; right: 34px; background: var(--cocoa); }
+#offre .of-ico--web i:nth-child(3) { top: 40px; width: 36px; height: 14px; background: var(--tally); }
+#offre .of-ico--thumb { display: grid; place-items: center; background: linear-gradient(135deg, var(--tally), var(--canister)); }
+#offre .of-ico--thumb b { font: 400 22px/1 var(--f-display); color: var(--mustard); transform: rotate(-8deg); text-shadow: 0 3px 0 var(--tally-deep); }
+#offre .of-ico--edit { background: #2B1D1E; }
+#offre .of-ico--edit i { position: absolute; left: 8px; height: 10px; border-radius: 3px; background: var(--canister); }
+#offre .of-ico--edit i:nth-child(1) { top: 14px; width: 50px; }
+#offre .of-ico--edit i:nth-child(2) { top: 30px; left: 30px; width: 54px; background: var(--mint); }
+#offre .of-ico--edit i:nth-child(3) { top: 46px; width: 78px; background: var(--fleece-hi); }
+#offre .of-basket { margin: 30px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 14px; font: 600 18px/1.4 var(--f-body); }
+@media (max-width: 699.98px) {
+  #offre .of-row { grid-template-columns: 1fr; }
+  #offre .of-box { grid-template-columns: auto 1fr; column-gap: 16px; align-items: center; }
+  #offre .of-ico { grid-row: span 2; width: 76px; height: 52px; margin: 0; }
+}

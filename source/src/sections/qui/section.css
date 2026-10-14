@@ -1,0 +1,55 @@
+#qui .qu-grid { display: grid; grid-template-columns: minmax(150px, 280px) 1fr; gap: clamp(20px, 5vw, 72px); align-items: end; }
+#qui .qu-me { position: relative; justify-self: center; width: clamp(120px, 16vw, 200px); }
+#qui .qu-me__btn { display: block; width: 100%; transform-origin: 50% 100%; }
+#qui .qu-me__btn img { display: block; width: 100%; height: auto; filter: drop-shadow(0 8px 6px rgba(90,55,40,.25)); }
+#qui .qu-me__sh { left: 50%; bottom: -8px; --w: 150%; --h: 22px; }
+#qui .qu-bubble { position: absolute; left: 70%; top: 2%; width: max-content; max-width: 210px; }
+#qui .qu-intro { min-width: 0; padding-bottom: 12px; }
+#qui .qu-sub { margin: clamp(56px, 8vw, 96px) 0 0; display: flex; gap: 12px; align-items: baseline; font-size: clamp(26px, 3vw, 34px); font-weight: 400; color: var(--cocoa); }
+#qui .qu-sub__hint { font-size: 16px; color: var(--cocoa-soft); }
+
+/* pillars: real clay columns, height = importance */
+#qui .qu-pillars { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); justify-items: center; gap: clamp(8px, 2vw, 28px); align-items: end; height: clamp(320px, 40vw, 500px); padding-top: 110px; margin-top: 0; }
+#qui .qu-floor { position: absolute; left: -2%; right: -2%; bottom: -14px; height: 28px; border-radius: 50%; background: radial-gradient(closest-side, rgba(90,55,40,.28), rgba(90,55,40,0)); pointer-events: none; }
+#qui .qu-pillar { position: relative; z-index: 1; width: min(100%, clamp(74px, 12vw, 150px)); height: var(--hh); display: flex; flex-direction: column; align-items: center; transform-origin: 50% 100%; transition: transform .25s var(--ease-pop), filter .2s; }
+#qui .qu-pillar__prop { position: absolute; bottom: calc(100% - 6px); left: 50%; width: 74%; max-width: 130px; height: auto; transform: translateX(-50%) rotate(-6deg); filter: drop-shadow(0 6px 5px rgba(90,55,40,.3)); pointer-events: none; transition: transform .3s var(--ease-pop); }
+#qui .qu-pillar[data-p="cine"] .qu-pillar__prop { width: 60%; }
+#qui .qu-pillar__cap { width: 112%; height: 22px; flex: none; border-radius: 10px; background: color-mix(in srgb, var(--c) 82%, #FFF8EE); box-shadow: var(--clay-hi), 0 5px 0 color-mix(in srgb, var(--c) 70%, #3A211C), var(--drop-sm); position: relative; z-index: 1; }
+#qui .qu-pillar__body {
+  flex: 1; width: 100%; margin-top: -2px; border-radius: 0 0 10px 10px; display: grid; place-items: center; padding: 10px 4px;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.16) 0 7px, rgba(60,30,20,.08) 7px 9px, rgba(255,255,255,0) 9px 18px),
+    radial-gradient(130% 90% at 30% 15%, color-mix(in srgb, var(--c) 70%, #FFF8EE), var(--c) 55%, color-mix(in srgb, var(--c) 80%, #3A211C));
+  box-shadow: var(--clay-hi), var(--clay-lo), var(--drop);
+}
+#qui .qu-pillar__name { writing-mode: vertical-rl; transform: rotate(180deg); font: 400 clamp(17px, 2.3vw, 30px)/1 var(--f-display); color: var(--cocoa); letter-spacing: .01em; hyphens: manual; }
+#qui .qu-pillar:hover { transform: translateY(-4px); }
+#qui .qu-pillar[aria-selected="true"] .qu-pillar__prop { transform: translateX(-50%) translateY(-14px) rotate(4deg) scale(1.08); }
+#qui .qu-pillar[aria-selected="false"] { filter: saturate(.7) brightness(.97); }
+
+#qui .qu-panel { position: relative; margin-top: 46px; min-height: 160px; }
+#qui .qu-card { display: grid; gap: 10px; justify-items: start; max-width: 62ch; padding: clamp(18px, 3vw, 30px); border-radius: 22px; background: var(--cyclo-hi); box-shadow: var(--drop), inset 0 2px 0 rgba(255,255,255,.7); font: 500 18px/1.5 var(--f-body); }
+#qui .qu-card p { margin: 0; }
+#qui .qu-card__big { font: 400 clamp(26px, 3vw, 36px)/1.05 var(--f-display); }
+
+/* rep game */
+#qui .qu-reps { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 4px 16px; margin-top: 6px; width: 100%; }
+#qui .qu-reps__db { grid-row: span 2; width: 110px; padding: 8px; border-radius: 18px; background: var(--cyclo); box-shadow: inset 0 -4px 0 rgba(60,30,20,.12), var(--drop-sm); touch-action: manipulation; }
+#qui .qu-reps__db img { display: block; width: 100%; height: auto; transition: transform .12s ease-out; pointer-events: none; }
+#qui .qu-reps__db.is-up img { transform: translateY(-16px) rotate(-14deg); }
+#qui .qu-reps__txt { margin: 0; font-size: 20px; }
+#qui .qu-reps__n { font: 400 24px/1 var(--f-display); font-variant-numeric: tabular-nums; }
+#qui .qu-reps__bar { height: 12px; border-radius: 9px; background: var(--cyclo-mid); overflow: hidden; }
+#qui .qu-reps__bar i { display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: var(--canister); border-radius: 9px; transition: width .15s; }
+
+@media (max-width: 699.98px) {
+  #qui .qu-grid { grid-template-columns: 110px 1fr; align-items: center; }
+  #qui .qu-me { width: 100px; }
+  #qui .qu-bubble { left: 10%; top: -54px; max-width: 170px; font-size: 15px; }
+  #qui .qu-pillars { height: 330px; gap: 8px; padding-top: 80px; }
+  #qui .qu-pillar__prop { width: 88%; }
+  #qui .qu-pillar__cap { height: 16px; }
+  #qui .qu-card { font-size: 16.5px; }
+  #qui .qu-reps__db { width: 88px; }
+}
+@media (max-width: 420px) { #qui .qu-grid { grid-template-columns: 1fr; } #qui .qu-me { width: 92px; justify-self: start; } }

@@ -1,0 +1,712 @@
+/* ==========================================================================
+   PLATEAU (hero) : Benj on stunt wires, props on fishing lines, clay letters
+   All rest positions live here; JS only adds transforms on top of them.
+   ========================================================================== */
+#plateau.bj-scene { padding: 0; scroll-margin-top: 0; z-index: 2; } /* above the next slate's open arm */
+
+#plateau .pl-set {
+  --bw: min(46vw, 640px, 74svh);          /* Benj (float) width */
+  --bh: calc(var(--bw) * .871);
+  --bx: 60%;                               /* Benj box centre */
+  --by: 46%;
+  --truss-y: 76px;
+  --pw: clamp(90px, 10vw, 150px);         /* clap, controller, dumbbell */
+  --cw: clamp(80px, 8.5vw, 130px);        /* camera */
+  --fw: 60px;                              /* film roll */
+  --hw: clamp(220px, 21vw, 300px);         /* hire sign width */
+  --hire-r: calc(var(--bx) - var(--bw) * .44);   /* its right edge sits at Benj's reaching hand */
+  --hire-t: calc(31% + 104px);
+  --floor-b: 12%;                          /* floor props base (from the bottom) */
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 640px;
+  max-height: 1040px;
+  overflow: hidden;
+  overflow: clip;
+  isolation: isolate;
+  color: var(--cocoa);
+  background-color: var(--cyclo);
+  background-image: radial-gradient(ellipse at 50% 35%, var(--cyclo-hi), var(--cyclo) 45%, var(--cyclo-mid) 80%, var(--cyclo-edge));
+}
+
+/* soft hand-off into the next set: the cyclorama melts into the page floor */
+#plateau .pl-set::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: clamp(56px, 9%, 96px);
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(230, 210, 192, 0), rgba(230, 210, 192, .7) 55%, var(--cyclo));
+}
+
+/* ---------- light, floor, beams ---------- */
+#plateau .pl-light {
+  position: absolute;
+  z-index: 0;
+  left: calc(55% - 30vmax);
+  top: calc(35% - 30vmax);
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--glow), rgba(255, 244, 224, .55) 45%, rgba(255, 244, 224, 0));
+  opacity: .55;
+  pointer-events: none;
+  will-change: transform;
+}
+#plateau .pl-floor {
+  position: absolute;
+  z-index: 0;
+  left: -10%;
+  right: -10%;
+  bottom: 0;
+  height: 24%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 80% at 50% 100%, rgba(243, 230, 216, .75), rgba(243, 230, 216, 0) 75%),
+    linear-gradient(180deg, rgba(243, 230, 216, 0), rgba(243, 230, 216, .7));
+  -webkit-mask: linear-gradient(180deg, rgba(0, 0, 0, 0), #000 38%);
+  mask: linear-gradient(180deg, rgba(0, 0, 0, 0), #000 38%);
+}
+#plateau .pl-beam {
+  position: absolute;
+  z-index: 1;
+  top: calc(var(--truss-y) + 58px);
+  width: 360px;
+  height: 640px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 244, 224, .62), rgba(255, 244, 224, .2) 55%, rgba(255, 244, 224, 0) 92%);
+  clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%);
+  transform-origin: 50% 0;
+}
+#plateau .pl-beam--l { left: calc(6% - 180px); transform: translateX(var(--beam-dx, 34px)) rotate(-42deg); }
+#plateau .pl-beam--r { left: calc(94% - 180px); transform: translateX(calc(var(--beam-dx, 34px) * -1)) rotate(42deg); }
+#plateau.is-live .pl-beam { animation: pl-flicker 5s steps(1) infinite; }
+#plateau.is-live .pl-beam--r { animation-delay: -2.3s; }
+
+/* ---------- truss (steel tube, clamps, two can lights) ---------- */
+#plateau .pl-truss {
+  position: absolute;
+  z-index: 4;
+  left: 0;
+  right: 0;
+  top: var(--truss-y);
+  height: 14px;
+  pointer-events: none;
+}
+#plateau .pl-truss__tube {
+  position: absolute;
+  inset: 0;
+  border-radius: 7px;
+  background:
+    repeating-linear-gradient(90deg, rgba(60, 30, 20, 0) 0 176px, rgba(60, 30, 20, .2) 176px 179px, rgba(255, 255, 255, .35) 179px 181px, rgba(60, 30, 20, 0) 181px 190px),
+    linear-gradient(180deg, var(--steel-hi), var(--steel) 55%, #8F8381);
+  box-shadow: var(--drop-sm), inset 0 -2px 0 rgba(60, 30, 20, .18);
+}
+#plateau .pl-clamp {
+  position: absolute;
+  z-index: 2;
+  top: -5px;
+  width: 16px;
+  height: 25px;
+  margin-left: -8px;
+  border-radius: 5px 5px 7px 7px;
+  background: linear-gradient(90deg, #1E1415, #4A3536 45%, var(--slate-deep));
+  box-shadow: 0 4px 6px -2px rgba(60, 30, 20, .5), inset 0 1px 0 rgba(255, 255, 255, .18);
+}
+#plateau .pl-clamp::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--steel-hi), var(--steel) 60%, #7E6E6C);
+}
+#plateau .pl-clamp--line { width: 12px; height: 19px; margin-left: -6px; top: -3px; }
+#plateau .pl-clamp--line::after { left: 3px; top: 4px; width: 6px; height: 6px; }
+#plateau .pl-clamp[data-anchor="wl"] { left: calc(var(--bx) - var(--bw) * .12); }
+#plateau .pl-clamp[data-anchor="wr"] { left: calc(var(--bx) + var(--bw) * .14); }
+#plateau .pl-clamp[data-anchor="clap"] { left: 22%; }
+#plateau .pl-clamp[data-anchor="hire"] { left: calc(var(--hire-r) - var(--hw) / 2); }
+#plateau .pl-clamp[data-anchor="controller"] { left: 86%; }
+#plateau .pl-clamp[data-anchor="camera"] { left: min(93%, 100% - var(--cw) / 2 - 18px); }
+
+#plateau .pl-can {
+  position: absolute;
+  top: 6px;
+  width: 44px;
+  height: 62px;
+  margin-left: -22px;
+  transform-origin: 22px 2px;
+}
+#plateau .pl-can--l { left: 5%; transform: rotate(-42deg); }
+#plateau .pl-can--r { left: 95.6%; transform: rotate(42deg); }
+#plateau .pl-can i { position: absolute; display: block; }
+#plateau .pl-can__stem {
+  left: 19px; top: 0; width: 6px; height: 12px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #8F8381, var(--steel-hi), #8F8381);
+}
+#plateau .pl-can__yoke {
+  left: 0; top: 10px; width: 44px; height: 30px;
+  border: 4px solid #9C8C8A;
+  border-top-color: #B9A9A7;
+  border-bottom: 0;
+  border-radius: 9px 9px 0 0;
+}
+#plateau .pl-can__body {
+  left: 5px; top: 16px; width: 34px; height: 40px;
+  border-radius: 9px 9px 6px 6px;
+  background: linear-gradient(90deg, #1A1112, #4A3536 38%, var(--slate-deep) 70%, #150E0F);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, .12), 0 6px 8px -4px rgba(60, 30, 20, .5);
+}
+#plateau .pl-can__lens {
+  left: 6px; top: 50px; width: 32px; height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 40%, var(--glow), #F6D9A8 55%, #C9A26C);
+  box-shadow: 0 0 14px 3px rgba(255, 244, 224, .85);
+}
+
+/* ---------- rig (wires + fishing lines) ---------- */
+#plateau .pl-rig {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+#plateau .pl-wire { stroke: #9C8C8A; stroke-width: 2.6; transition: opacity .45s ease, stroke-width .12s; }
+#plateau .pl-wire-hi { stroke: var(--steel-hi); stroke-width: 1; transition: opacity .45s ease; }
+#plateau .pl-wire.is-taut { stroke-width: 1.6; }
+#plateau .pl-wire-hi.is-taut { stroke-width: .6; }
+#plateau .pl-wire.is-gone, #plateau .pl-wire-hi.is-gone { opacity: 0; }
+#plateau .pl-line { stroke: rgba(90, 55, 40, .45); stroke-width: 1; }
+#plateau .pl-line--hire { stroke: rgba(90, 55, 40, .6); stroke-width: 1.4; }
+
+/* ---------- copy ---------- */
+#plateau .pl-copy {
+  position: absolute;
+  z-index: 5;
+  left: var(--gutter);
+  top: 31%;
+  max-width: calc(100% - 2 * var(--gutter));
+}
+#plateau .pl-tag {
+  max-width: 24ch;
+  font: 800 clamp(20px, 2vw, 28px)/1.12 var(--f-body);
+  color: var(--cocoa);
+  letter-spacing: -.005em;
+}
+#plateau .pl-tape {
+  --r: -2deg;
+  margin-top: 10px;
+  margin-left: -4px;
+  font-size: clamp(16px, 1.35vw, 20px);
+}
+
+/* ---------- clay letters (xylophone) ---------- */
+#plateau .pl-title {
+  position: absolute;
+  z-index: 5;
+  left: var(--gutter);
+  bottom: 10%;
+  margin: 0;
+  font: 400 clamp(96px, 17vw, 250px)/.8 var(--f-display);
+  letter-spacing: -.035em;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  user-select: none;
+}
+#plateau .pl-letter {
+  --dz: clamp(.8px, .09vw + .45px, 1.7px);
+  position: relative;
+  isolation: isolate;
+  display: inline-block;
+  padding-bottom: .06em;
+  transform-origin: 50% 100%;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+#plateau .pl-letter:nth-child(1) { rotate: -5deg; }
+#plateau .pl-letter:nth-child(2) { rotate: 3deg; translate: 0 -.02em; }
+#plateau .pl-letter:nth-child(3) { rotate: -2.5deg; }
+#plateau .pl-letter:nth-child(4) { rotate: 6deg; translate: .02em 0; }
+#plateau .pl-letter::after {
+  content: attr(data-l);
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: rgba(255, 255, 255, 0);
+  text-shadow: none;
+  background: linear-gradient(180deg, rgba(255, 252, 246, .62), rgba(255, 252, 246, .18) 26%, rgba(255, 252, 246, 0) 45%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  pointer-events: none;
+}
+#plateau .pl-letter__sh {
+  --w: .78em;
+  --h: .11em;
+  z-index: -1;
+  left: 50%;
+  bottom: -.015em;
+}
+#plateau .pl-letter.is-flash { --face: var(--glow); }
+#plateau .pl-letter:focus-visible { outline-offset: 2px; border-radius: 12px; }
+
+/* ---------- film roll trail ---------- */
+#plateau .pl-trail {
+  position: absolute;
+  z-index: 6;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--floor-b) - 2px);
+  height: 18px;
+  pointer-events: none;
+  clip-path: inset(0 100% 0 0);
+  background:
+    repeating-linear-gradient(90deg, var(--cyclo-hi) 0 5px, rgba(243, 230, 216, 0) 5px 11px) 0 3px / 100% 3px no-repeat,
+    repeating-linear-gradient(90deg, var(--cyclo-hi) 0 5px, rgba(243, 230, 216, 0) 5px 11px) 0 calc(100% - 3px) / 100% 3px no-repeat,
+    repeating-linear-gradient(90deg, rgba(243, 230, 216, 0) 0 30px, rgba(243, 230, 216, .16) 30px 32px),
+    linear-gradient(180deg, #7A4335, var(--film) 50%, #43221A);
+  box-shadow: 0 4px 5px -2px rgba(90, 55, 40, .45);
+}
+
+/* ---------- Benj ---------- */
+#plateau .pl-benj {
+  position: absolute;
+  z-index: 7;
+  left: calc(var(--bx) - var(--bw) / 2);
+  top: calc(var(--by) - var(--bh) / 2);
+  width: var(--bw);
+  height: var(--bh);
+  transform-origin: 36% 50%;
+  pointer-events: none;
+  will-change: transform;
+}
+#plateau .pl-benj__img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: auto;
+  max-width: none;
+  transform-origin: 40% 50%;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  filter: drop-shadow(0 16px 14px rgba(90, 55, 40, .22));
+}
+#plateau.is-live .pl-benj__img { animation: pl-breathe 4s ease-in-out infinite, pl-sway 7s ease-in-out infinite; }
+/* the whole silhouette is grabbable (head to sneakers), nothing around it */
+#plateau .pl-benj__hit {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
+  clip-path: polygon(9% 6%, 20% 0, 33% 0, 40% 9%, 41% 26%, 52% 31%, 62% 30%, 64% 40%, 82% 54%, 97% 60%, 99% 78%, 93% 94%, 70% 94%, 52% 86%, 40% 78%, 22% 76%, 12% 88%, 0 90%, 0 72%, 10% 64%, 14% 50%, 12% 34%, 8% 22%);
+}
+/* the focus ring would be clipped: draw it on the box instead */
+#plateau .pl-benj:has(.pl-benj__hit:focus-visible) { outline: 3px dashed var(--cocoa); outline-offset: 2px; border-radius: 24px; }
+/* phones: a vertical swipe on Benj scrolls the page, sideways pulls him */
+@media (pointer: coarse) {
+  #plateau .pl-benj__hit { touch-action: pan-y; }
+}
+#plateau .pl-benj__hit:active { cursor: grabbing; }
+#plateau .pl-benj-shadow {
+  --w: calc(var(--bw) * .5);
+  --h: calc(var(--bw) * .055);
+  z-index: 4;
+  left: calc(var(--bx) + var(--bw) * .06);
+  top: calc(100% - var(--floor-b) - var(--h) * .5);
+  will-change: transform, opacity;
+}
+
+/* ---------- props ---------- */
+#plateau .pl-prop {
+  position: absolute;
+  z-index: 8;
+  display: block;
+  padding: 0;
+  border-radius: 14px;
+  touch-action: none;
+  cursor: grab;
+  will-change: transform;
+}
+#plateau .pl-prop img {
+  width: 100%;
+  height: auto;
+  max-width: none;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  filter: drop-shadow(0 12px 10px rgba(90, 55, 40, .28));
+}
+/* the breeze lives in CSS (compositor), so the physics can fall asleep */
+#plateau.is-live .pl-prop--hang img { transform-origin: 50% 4%; animation: pl-dangle 5.6s ease-in-out infinite; }
+#plateau.is-live .pl-prop[data-prop="controller"] img { animation-duration: 6.4s; animation-delay: -2s; }
+#plateau.is-live .pl-prop[data-prop="camera"] img { animation-duration: 4.9s; animation-delay: -3.1s; }
+/* small props keep a 44px+ tap target without changing their look */
+#plateau .pl-prop::before { content: ""; position: absolute; inset: -10px; }
+#plateau .pl-prop:focus-visible { outline-offset: 6px; }
+#plateau .pl-prop[data-prop="clap"] { width: var(--pw); left: calc(22% - var(--pw) / 2); top: calc(22% - var(--pw) * .5358); }
+#plateau .pl-prop[data-prop="controller"] { width: var(--pw); left: calc(86% - var(--pw) / 2); top: calc(22% - var(--pw) * .4044); }
+#plateau .pl-prop[data-prop="camera"] { width: var(--cw); left: calc(min(93%, 100% - var(--cw) / 2 - 18px) - var(--cw) / 2); top: calc(52% - var(--cw) * .3821); }
+#plateau .pl-prop--floor { z-index: 6; }
+#plateau .pl-prop[data-prop="dumbbell"] { width: var(--pw); left: calc(82% - var(--pw) / 2); bottom: var(--floor-b); }
+#plateau .pl-prop[data-prop="filmroll"] { width: var(--fw); left: calc(66% - var(--fw) / 2); bottom: var(--floor-b); touch-action: pan-y; }
+#plateau .pl-prop[data-prop="filmroll"]::before { inset: -18px -14px -8px; }
+#plateau .pl-prop[data-prop="dumbbell"] img { transform-origin: 50% 90%; filter: drop-shadow(0 6px 5px rgba(90, 55, 40, .25)); }
+#plateau .pl-prop[data-prop="filmroll"] img { filter: drop-shadow(0 4px 3px rgba(90, 55, 40, .25)); }
+#plateau .pl-fsh { z-index: 5; bottom: calc(var(--floor-b) - 8px); will-change: transform, opacity; }
+#plateau .pl-fsh[data-sh="dumbbell"] { --w: calc(var(--pw) * .92); --h: calc(var(--pw) * .14); left: 82%; }
+#plateau .pl-fsh[data-sh="filmroll"] { --w: calc(var(--fw) * 1.05); --h: 12px; left: 66%; }
+
+/* ---------- the hire sign: a big clay ticket on its own line ---------- */
+#plateau .pl-hire {
+  position: absolute;
+  z-index: 6;                      /* under Benj: his reaching hand overlaps its corner */
+  left: calc(var(--hire-r) - var(--hw));
+  top: var(--hire-t);
+  width: var(--hw);
+  display: block;
+  padding-top: 14px;
+  color: var(--cocoa);
+  text-decoration: none;
+  touch-action: none;
+  cursor: pointer;
+  will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+}
+#plateau .pl-hire__card {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  justify-items: start;
+  gap: 2px;
+  padding: 14px 20px 13px 22px;
+  transform-origin: 50% 0;
+  filter: drop-shadow(0 14px 12px rgba(90, 55, 40, .34));
+  transition: scale .22s var(--ease-pop);
+}
+#plateau .pl-hire__card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 10px;
+  background:
+    radial-gradient(circle 7px at 50% 9px, #5A3A2C 0 5px, rgba(90, 58, 44, 0) 6px),
+    repeating-linear-gradient(0deg, rgba(58, 33, 28, .045) 0 1px, rgba(58, 33, 28, 0) 1px 3px),
+    radial-gradient(80% 70% at 28% 22%, rgba(255, 250, 236, .6), rgba(255, 250, 236, 0) 70%),
+    linear-gradient(100deg, var(--mustard), #F6D88F 56%, #E7B850);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, .45), inset 0 -5px 0 rgba(150, 105, 30, .28);
+  -webkit-mask:
+    radial-gradient(circle 12px at 0 58%, rgba(0, 0, 0, 0) 96%, #000) 0 0 / 51% 100% no-repeat,
+    radial-gradient(circle 12px at 100% 58%, rgba(0, 0, 0, 0) 96%, #000) 100% 0 / 51% 100% no-repeat;
+  mask:
+    radial-gradient(circle 12px at 0 58%, rgba(0, 0, 0, 0) 96%, #000) 0 0 / 51% 100% no-repeat,
+    radial-gradient(circle 12px at 100% 58%, rgba(0, 0, 0, 0) 96%, #000) 100% 0 / 51% 100% no-repeat;
+}
+/* steel ring through the punched hole */
+#plateau .pl-hire__card::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -9px;
+  width: 14px;
+  height: 22px;
+  margin-left: -7px;
+  border: 3px solid #9C8C8A;
+  border-top-color: var(--steel-hi);
+  border-radius: 8px;
+}
+#plateau .pl-hire__top { font: 800 12px/1 var(--f-body); letter-spacing: .14em; text-transform: uppercase; opacity: .8; padding-top: 6px; }
+#plateau .pl-hire__big { font: 400 clamp(25px, 2.3vw, 33px)/1 var(--f-display); letter-spacing: -.01em; white-space: nowrap; }
+#plateau .pl-hire__small { display: inline-flex; align-items: center; gap: 8px; font: 800 17px/1.1 var(--f-body); }
+#plateau .pl-hire__arrow {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-top: 3px solid var(--cocoa);
+  border-right: 3px solid var(--cocoa);
+  border-radius: 1px;
+  transform: rotate(45deg);
+}
+#plateau .pl-hire:hover .pl-hire__card, #plateau .pl-hire:focus-visible .pl-hire__card { scale: 1.04; }
+#plateau .pl-hire:focus-visible { outline-offset: 2px; }
+#plateau.is-live .pl-hire__arrow { animation: pl-nudge 1.4s var(--ease-out) infinite; }
+@media (pointer: coarse) {
+  #plateau .pl-hire { touch-action: pan-y; }
+}
+
+/* ---------- bubble ---------- */
+#plateau .pl-bubble-anchor {
+  position: absolute;
+  z-index: 12;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  transform: translate3d(calc(var(--bx) + 10px), 120px, 0);
+}
+#plateau .pl-bubble { left: 0; bottom: 0; font-size: 19px; }
+
+/* ---------- hint ---------- */
+#plateau .pl-hint {
+  --r: -4deg;
+  --ar: 36deg;
+  position: absolute;
+  z-index: 9;
+  left: calc(var(--bx) - var(--bw) * .5 - 150px);
+  top: calc(var(--by) - var(--bh) * .5 + 40px);
+  font-size: 22px;
+  transition: opacity .3s ease, transform .3s var(--ease-pop);
+}
+#plateau .pl-hint.is-done { opacity: 0; transform: rotate(-4deg) scale(.7); }
+
+/* ---------- viewfinder ---------- */
+#plateau .pl-vf {
+  position: absolute;
+  z-index: 10;
+  left: 16px;
+  right: 16px;
+  top: 72px;
+  bottom: 16px;
+  pointer-events: none;
+}
+#plateau .pl-vf__c {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border: 0 solid var(--cocoa);
+  opacity: .78;
+}
+#plateau .pl-vf__c--tl { left: 0; top: 0; border-left-width: 3px; border-top-width: 3px; border-top-left-radius: 6px; }
+#plateau .pl-vf__c--tr { right: 0; top: 0; border-right-width: 3px; border-top-width: 3px; border-top-right-radius: 6px; }
+#plateau .pl-vf__c--bl { left: 0; bottom: 0; border-left-width: 3px; border-bottom-width: 3px; border-bottom-left-radius: 6px; }
+#plateau .pl-vf__c--br { right: 0; bottom: 0; border-right-width: 3px; border-bottom-width: 3px; border-bottom-right-radius: 6px; }
+#plateau .pl-tc {
+  position: absolute;
+  left: 14px;
+  bottom: 12px;
+  font-size: 20px;
+  transform: rotate(-1deg);
+}
+#plateau .pl-batt {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  display: flex;
+  gap: 2px;
+  width: 40px;
+  height: 20px;
+  padding: 3px;
+  border-radius: 5px;
+  background: var(--slate-deep);
+  box-shadow: inset 0 2px 3px rgba(20, 8, 6, .6), 0 1px 0 rgba(255, 255, 255, .3);
+}
+#plateau .pl-batt::after {
+  content: "";
+  position: absolute;
+  right: -5px;
+  top: 6px;
+  width: 4px;
+  height: 8px;
+  border-radius: 0 2px 2px 0;
+  background: var(--slate-deep);
+}
+#plateau .pl-batt i { flex: 1; border-radius: 2px; background: var(--mint); }
+#plateau .pl-batt i:last-child { background: var(--mustard); }
+#plateau.is-live .pl-batt i:last-child { animation: bj-blink 1.6s steps(1) infinite; }
+
+/* ---------- cue ---------- */
+#plateau .pl-cue {
+  --r: 2deg;
+  position: absolute;
+  z-index: 11;
+  right: calc(16px + 74px);
+  bottom: 30px;
+  gap: 10px;
+  padding: .3em 1em .26em;
+  font-size: 22px;
+  letter-spacing: .06em;
+}
+#plateau .pl-cue__chev {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  margin-top: -6px;
+  border-right: 3px solid var(--cocoa);
+  border-bottom: 3px solid var(--cocoa);
+  border-radius: 1px;
+  transform: rotate(45deg);
+}
+#plateau.is-live .pl-cue__chev { animation: pl-chev 1.3s var(--ease-out) infinite; }
+
+/* ---------- intro: a clapper arm slams onto the truss, then lifts away ---------- */
+#plateau .pl-intro-arm {
+  position: absolute;
+  z-index: 20;
+  left: -2px;
+  right: -2px;
+  top: calc(var(--truss-y) - 30px);
+  height: 30px;
+  border-radius: 6px;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, 0) 45%, rgba(60, 30, 20, .18)),
+    repeating-linear-gradient(-55deg, var(--wood) 0 24px, var(--stripe) 24px 48px);
+  box-shadow: var(--drop-sm), inset 0 3px 0 rgba(255, 255, 255, .25), inset 0 -3px 0 rgba(60, 30, 20, .22);
+  transform-origin: 0 100%;
+  animation: pl-intro-arm 1s linear both;
+}
+
+/* ---------- fallback when JS is off: straight lines up to the truss ---------- */
+#plateau:not(.pl-on) .pl-prop--hang::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 96%;
+  width: 1px;
+  height: 100vh;
+  background: rgba(90, 55, 40, .45);
+}
+#plateau:not(.pl-on) .pl-benj::before,
+#plateau:not(.pl-on) .pl-benj::after {
+  content: "";
+  position: absolute;
+  bottom: 64%;
+  width: 2px;
+  height: 100vh;
+  background: #9C8C8A;
+}
+#plateau:not(.pl-on) .pl-benj::before { left: 30%; }
+#plateau:not(.pl-on) .pl-benj::after { left: 62%; bottom: 44%; }
+
+/* ---------- portrait tablets: bigger Benj, copy moves under him ---------- */
+@media (min-width: 700px) and (max-aspect-ratio: 1/1) {
+  #plateau .pl-set { --bw: min(66vw, 640px, 52svh); --by: 40%; }
+  #plateau .pl-set { --hire-r: calc(100% - var(--gutter)); --hire-t: 64%; --hw: 260px; }
+  #plateau .pl-copy { top: 66%; }
+  #plateau .pl-prop[data-prop="camera"] { top: calc(31% - var(--cw) * .3821); }
+}
+
+/* ==========================================================================
+   MOBILE
+   ========================================================================== */
+@media (max-width: 699.98px) {
+  #plateau .pl-set {
+    --bw: 86vw;
+    --bx: 55%;
+    --by: calc(var(--truss-y) + 54px + var(--bh) / 2);
+    --truss-y: 60px;
+    --floor-b: 8%;
+    --hw: min(250px, 66vw);
+    --hire-r: calc(100% - 16px);
+    --hire-t: calc(var(--by) + var(--bh) * .5 - 4px);
+    --copy-t: calc(var(--hire-t) + 108px);
+    min-height: 660px;
+  }
+  #plateau .pl-floor { height: 30%; }
+  #plateau .pl-beam { width: 220px; height: 420px; top: calc(var(--truss-y) + 36px); }
+  #plateau .pl-beam--l { left: calc(3.5% - 110px); --beam-dx: 20px; }
+  #plateau .pl-beam--r { left: calc(96.5% - 110px); --beam-dx: 20px; }
+  #plateau .pl-can { transform-origin: 22px 2px; scale: .66; top: 4px; }
+  #plateau .pl-can--l { left: 3.5%; transform: rotate(-38deg); }
+  #plateau .pl-can--r { left: 96.5%; transform: rotate(38deg); }
+
+  #plateau .pl-clamp[data-anchor="clap"] { left: 22.5%; }
+  #plateau .pl-clamp[data-anchor="controller"] { left: 86%; }
+  #plateau .pl-clamp[data-anchor="camera"] { left: max(9%, 44px); }
+  #plateau .pl-prop[data-prop="clap"] { width: 54px; left: calc(22.5% - 27px); top: calc(14% - 29px); }
+  #plateau .pl-prop[data-prop="controller"] { width: 66px; left: calc(86% - 33px); top: calc(18% - 27px); }
+  #plateau .pl-prop[data-prop="camera"] { width: 56px; left: calc(max(9%, 44px) - 28px); top: calc(50% - 21px); }
+  #plateau .pl-prop[data-prop="dumbbell"] { width: 76px; left: calc(83% - 38px); }
+  #plateau .pl-prop[data-prop="filmroll"] { --fw: 36px; left: calc(63% - 18px); }
+  #plateau .pl-fsh[data-sh="dumbbell"] { --w: 70px; --h: 11px; left: 83%; }
+  #plateau .pl-fsh[data-sh="filmroll"] { --w: 38px; --h: 8px; left: 63%; }
+  #plateau .pl-trail { height: 12px; bottom: calc(var(--floor-b) - 1px); }
+
+  #plateau .pl-copy { left: 16px; top: var(--copy-t); max-width: calc(100% - 32px); }
+  #plateau .pl-tag { font-size: 21px; }
+  #plateau .pl-tape { font-size: 15px; margin-top: 8px; }
+  #plateau .pl-title { left: 16px; top: calc(var(--copy-t) + 86px); bottom: auto; font-size: 24vw; }
+  #plateau .pl-benj-shadow { --w: calc(var(--bw) * .6); --h: 16px; left: calc(var(--bx) + var(--bw) * .12); opacity: .7; }
+  #plateau .pl-hire__card { padding: 12px 16px 11px 18px; }
+  #plateau .pl-hire__big { font-size: 25px; }
+  #plateau .pl-hire__small { font-size: 16px; }
+
+  #plateau .pl-hint { left: 46%; top: calc(var(--truss-y) + 34px); flex-direction: row-reverse; font-size: 19px; --r: 4deg; --ar: -34deg; --af: -1; }
+  #plateau .pl-vf { top: 56px; left: 10px; right: 10px; bottom: 10px; }
+  #plateau .pl-vf__c { width: 22px; height: 22px; }
+  #plateau .pl-tc { left: auto; right: 58px; bottom: 10px; font-size: 18px; }
+  #plateau .pl-batt { right: 10px; bottom: 12px; width: 36px; height: 18px; }
+  #plateau .pl-cue { left: 16px; right: auto; bottom: 14px; --r: -2deg; font-size: 20px; }
+}
+
+/* ---------- short phones: a smaller Benj so everything breathes ---------- */
+@media (max-width: 699.98px) and (max-height: 760px) {
+  #plateau .pl-set { --bw: min(72vw, 300px); --by: calc(var(--truss-y) + 40px + var(--bh) / 2); --copy-t: calc(var(--hire-t) + 100px); }
+  #plateau .pl-prop[data-prop="clap"] { top: calc(var(--truss-y) + 18px); }
+  #plateau .pl-tape { display: none; }
+  #plateau .pl-title { top: calc(var(--copy-t) + 40px); font-size: 20vw; }
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  #plateau .pl-intro-arm { display: none; }
+  #plateau .pl-benj__img, #plateau .pl-cue__chev, #plateau .pl-beam, #plateau .pl-prop img, #plateau .pl-hire__arrow { animation: none !important; }
+}
+
+/* ==========================================================================
+   KEYFRAMES
+   ========================================================================== */
+@keyframes pl-breathe {
+  0%, 100% { scale: 1; }
+  50% { scale: 1.012; }
+}
+@keyframes pl-sway {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  30% { translate: 2px -4px; rotate: -.6deg; }
+  65% { translate: -2px 3px; rotate: .5deg; }
+}
+@keyframes pl-dangle {
+  0%, 100% { rotate: -2.2deg; }
+  50% { rotate: 2.2deg; }
+}
+@keyframes pl-nudge {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 4px -4px; }
+}
+@keyframes pl-chev {
+  0%, 100% { translate: 0 0; }
+  45% { translate: 0 5px; }
+}
+@keyframes pl-flicker {
+  0%, 100% { opacity: 1; }
+  41% { opacity: .9; }
+  43% { opacity: 1; }
+  77% { opacity: .94; }
+  79% { opacity: 1; }
+}
+@keyframes pl-intro-arm {
+  0% { transform: translateY(0) rotate(-18deg); animation-timing-function: cubic-bezier(.55, 0, .9, .4); }
+  15% { transform: translateY(0) rotate(0deg); }
+  27% { transform: translateY(0) rotate(0deg); animation-timing-function: cubic-bezier(.5, 0, .2, 1); }
+  70% { transform: translateY(-260%) rotate(-3deg); opacity: 1; }
+  100% { transform: translateY(-400%) rotate(-3deg); opacity: 0; visibility: hidden; }
+}
